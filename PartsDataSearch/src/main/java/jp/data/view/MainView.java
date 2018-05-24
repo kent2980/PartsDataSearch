@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import jp.data.controller.MainViewController;
+import com.controller.MainViewController;
 
 public class MainView {
 	

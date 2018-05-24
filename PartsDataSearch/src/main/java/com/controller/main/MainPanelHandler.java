@@ -1,14 +1,14 @@
-package jp.data.controller;
+package com.controller.main;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.JTextField;
 
-class MainPanelHandler implements KeyListener{
+public class MainPanelHandler implements KeyListener{
 	private final JTextField field;
-	
-	MainPanelHandler(JTextField field) {
+
+	public MainPanelHandler(JTextField field) {
 		this.field = field;
 	}
 	@Override
@@ -20,13 +20,13 @@ class MainPanelHandler implements KeyListener{
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO 自動生成されたメソッド・スタブ
-		
+
 	}
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		// TODO 自動生成されたメソッド・スタブ
-		
+
 	}
 
 }

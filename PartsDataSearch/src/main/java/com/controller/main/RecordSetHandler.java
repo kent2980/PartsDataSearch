@@ -1,4 +1,4 @@
-package jp.data.controller;
+package com.controller.main;
 
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 import jp.data.model.PartsTextFieldModel;
 import jp.data.model.SetPartsTextFieldRecordModel;
 
-class RecordSetHandler implements ActionListener,FocusListener{
+public class RecordSetHandler implements ActionListener,FocusListener{
 	private final List<Map<String,String>> modelDataSetList;
 	private final JTextField field;
 
@@ -27,7 +27,7 @@ class RecordSetHandler implements ActionListener,FocusListener{
 	public void actionPerformed(ActionEvent e) {
 		PartsTextFieldModel textModel = new PartsTextFieldModel(field.getText());
 		String partsName =textModel.getPartsName();
-		field.setText(partsName);			
+		field.setText(partsName);
 		if(field.getText().equals("1列目のバーコードを読んでください")) {
 			field.setFont(new Font("メイリオ", Font.BOLD, 24));
 		}else {
@@ -55,7 +55,7 @@ class RecordSetHandler implements ActionListener,FocusListener{
 	@Override
 	public void focusLost(FocusEvent arg0) {
 		// TODO 自動生成されたメソッド・スタブ
-		
+
 	}
 
 }

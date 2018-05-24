@@ -1,4 +1,4 @@
-package jp.data.controller;
+package com.controller.addpanel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +11,10 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import jp.data.model.FromTimeLoader;
+import jp.data.view.AddModelPanel;
+import jp.data.view.MainView;
+
 public class RisetDialogHandler implements ActionListener {
 	private final JDialog dialog;
 	private final JTextField partsField;
@@ -20,23 +24,22 @@ public class RisetDialogHandler implements ActionListener {
 	private final List<Map<Integer, String>> partsStreamSet;
 	private final JLabel stLabel;
 	private final JLabel RemainingParts;
-	
-	public RisetDialogHandler(JDialog dialog,JTextField partsField,JComboBox<String> combo, DefaultComboBoxModel<String> model,
-			List<Map<String,String>> modelDataSetList, List<Map<Integer, String>> partsStreamSet,
-			JLabel stLabel, JLabel RemainingParts) {
-		this.dialog = dialog;
-		this.partsField = partsField;
-		this.combo = combo;
-		this.model = model;
+	private final FromTimeLoader fromTimeLoader = FromTimeLoader.getInstance();
+
+	public RisetDialogHandler(List<Map<String,String>> modelDataSetList, List<Map<Integer, String>> partsStreamSet, MainView view, AddModelPanel addPanel) {
+		this.dialog = view.getDialog();
+		this.partsField = view.getPartsCodeField();
+		this.combo = addPanel.getCombo();
+		this.model = addPanel.getModel();
 		this.modelDataSetList = modelDataSetList;
 		this.partsStreamSet = partsStreamSet;
-		this.stLabel = stLabel;
-		this.RemainingParts = RemainingParts;
+		this.stLabel = addPanel.getStView();
+		this.RemainingParts = addPanel.getRemainingParts();
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		MainViewController.fromTime = null;
+		fromTimeLoader.deleteFromTime();
 		partsField.setText("");
 		stLabel.setText("");
 		RemainingParts.setText("");

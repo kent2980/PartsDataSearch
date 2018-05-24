@@ -12,26 +12,30 @@ import javax.swing.SpringLayout;
 import javax.swing.table.DefaultTableModel;
 
 public class RemainingPartsView extends JDialog {
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	private final DefaultTableModel model;
 	private final JTable table;
-	
+
 	public RemainingPartsView(){
 		//Viewの設定
 		this.setBounds(100, 100, 500, 700);
 		this.setLocationRelativeTo(null);
 		this.setModal(true);
-		
+
 		//パネル
 		JPanel panel = new JPanel();
 		SpringLayout layout = new SpringLayout();
 		panel.setLayout(layout);
-		
+
 		//モデル名ラベル
 		JLabel modelName = new JLabel();
 		layout.putConstraint(SpringLayout.NORTH, modelName, 10, SpringLayout.NORTH, panel);
 		layout.putConstraint(SpringLayout.WEST, modelName, 10, SpringLayout.WEST, panel);
 		panel.add(modelName);
-		
+
 		//テーブル
 		model = new DefaultTableModel(3,40);
 		table = new JTable(model);
@@ -43,10 +47,10 @@ public class RemainingPartsView extends JDialog {
 		layout.putConstraint(SpringLayout.EAST, sp, -10, SpringLayout.EAST, panel);
 		layout.putConstraint(SpringLayout.SOUTH, sp, -20, SpringLayout.SOUTH, panel);
 		panel.add(sp);
-		
+
 		this.getContentPane().add(panel, BorderLayout.CENTER);
 	}
-	
+
 	public void setTableModel(Object[][] data, Object[] column) {
 		model.setDataVector(data, column);
 		table.setModel(model);

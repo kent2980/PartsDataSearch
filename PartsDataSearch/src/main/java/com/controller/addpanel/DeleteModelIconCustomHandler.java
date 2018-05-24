@@ -1,4 +1,4 @@
-package jp.data.controller;
+package com.controller.addpanel;
 
 import java.awt.Image;
 import java.awt.event.MouseEvent;
@@ -12,7 +12,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
-class DeleteModelIconCustomHandler implements MouseListener{
+import com.controller.main.CharacterIconCustomHandler;
+
+import jp.data.view.AddModelPanel;
+
+public class DeleteModelIconCustomHandler implements MouseListener{
 	private final JLabel batuLabel;
 	private final JComboBox<String> combo;
 	private final DefaultComboBoxModel<String> model;
@@ -20,13 +24,13 @@ class DeleteModelIconCustomHandler implements MouseListener{
 	private final List<Map<Integer, String>> partsStreamSet;
 	private static ImageIcon iconSelect;
 	private static ImageIcon iconLight;
-	
+
 	static {
 		URL url1 = CharacterIconCustomHandler.class.getResource("/picture/newIcon/batuSelect.png");
 		iconSelect = new ImageIcon(url1);
 		Image image1 = iconSelect.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH);
 		iconSelect = new ImageIcon(image1);
-		
+
 
 		URL url2 = CharacterIconCustomHandler.class.getResource("/picture/newIcon/batu.png");
 		iconLight = new ImageIcon(url2);
@@ -34,18 +38,17 @@ class DeleteModelIconCustomHandler implements MouseListener{
 		iconLight = new ImageIcon(image2);
 	}
 
-	DeleteModelIconCustomHandler(JLabel batuLabel,JComboBox<String> combo, DefaultComboBoxModel<String> model,
-																			List<Map<String,String>> modelDataSetList, List<Map<Integer, String>> partsStreamSet){
-		this.batuLabel = batuLabel;
-		this.combo = combo;
-		this.model = model;
+	public DeleteModelIconCustomHandler(List<Map<String,String>> modelDataSetList, List<Map<Integer, String>> partsStreamSet, AddModelPanel addPanel){
+		this.batuLabel = addPanel.getBatuLabel();
+		this.combo = addPanel.getCombo();
+		this.model = addPanel.getModel();
 		this.modelDataSetList = modelDataSetList;
 		this.partsStreamSet = partsStreamSet;
 	}
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO 自動生成されたメソッド・スタブ
-		
+
 	}
 
 	@Override

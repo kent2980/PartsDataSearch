@@ -1,13 +1,9 @@
-package jp.data.controller;
+package com.controller.addpanel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -16,12 +12,24 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import jp.data.model.AddExcelDataFileModel;
-import jp.data.model.RemainingPartsMathModel;
-import jp.data.model.StationSearchModel;
-import jp.data.view.RisetDialog;
+import com.controller.MainViewController;
 
-class AddExcelDataFileHandler implements ActionListener{
+import jp.data.model.AddExcelDataFileModel;
+import jp.data.model.FromTimeLoader;
+import jp.data.model.RemainingPartsMathModel;
+import jp.data.model.SettingLoader;
+import jp.data.model.StationSearchModel;
+import jp.data.view.AddModelPanel;
+import jp.data.view.MainView;
+
+/**
+ * Addボタンが押された時のイベントリスナークラス
+ * 新規のデータ、または内部データに共通性が無い場合は、新規のリストにデータを作成します。
+ * 内部データに共通性がある場合は、既存のリストにデータを追加します。
+ * @author kent2
+ *
+ */
+public class AddExcelDataFileHandler implements ActionListener{
 	private final JComboBox<String> combo1;
 	private final JTextField partsCodeField;
 	private final DefaultComboBoxModel<String> model;
@@ -33,51 +41,34 @@ class AddExcelDataFileHandler implements ActionListener{
 	private final JLabel stLabel;
 	private final JLabel RemainingParts;
 	private AddExcelDataFileModel data;
-	
-	AddExcelDataFileHandler(JComboBox<String> combo1,JTextField partsCodeField,DefaultComboBoxModel<String> model,
-														List<Map<String,String>> modelDataSetList,JLabel mcName,JLabel substrateName,JLabel substrateFace,
-														List<Map<Integer, String>> partsStreamSet, JLabel stLabel , JLabel RemainingParts){
-		this.combo1 = combo1;
-		this.partsCodeField = partsCodeField;
-		this.model = model;
-		this.modelDataSetList = modelDataSetList;
-		this.mcName = mcName;
-		this.substrateName = substrateName;
-		this.substrateFace = substrateFace;
-		this.partsStreamSet = partsStreamSet;
-		this.stLabel = stLabel;
-		this.RemainingParts = RemainingParts;
+	private final FromTimeLoader fromTimeLoader = FromTimeLoader.getInstance();
+
+	public AddExcelDataFileHandler(MainView view, AddModelPanel addPanel, int row){
+		this.combo1 = addPanel.getCombo();
+		this.partsCodeField = view.getPartsCodeField();
+		this.model = addPanel.getModel();
+		this.modelDataSetList = MainViewController.getModelDataSetList(row);
+		this.mcName = addPanel.getMcName();
+		this.substrateName = addPanel.getSubstrateName();
+		this.substrateFace = addPanel.getSubstrateFace();
+		this.partsStreamSet = MainViewController.getPartsStreamSet(row);
+		this.stLabel = addPanel.getStView();
+		this.RemainingParts = addPanel.getRemainingParts();
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//設定ファイル読み込み
-		Path path = Paths.get("setting.ini");
-		String read = null;
-		try (BufferedReader reader = Files.newBufferedReader(path);){
-			for(;;) {
-				read = reader.readLine();
-				if(read.substring(0, 7).equals("ExelPath")) {
-					break;
-				}else {
-					break;
-				}
-			}
-		} catch (IOException e1) {
-			// TODO 自動生成された catch ブロック
-			e1.printStackTrace();
+		//設定ファイルからエクセルファイルのパスを取得する
+		String excelPath = SettingLoader.getInstance().getExcelPath();
+		//fromtimeの設定がない場合は設定する
+		if(fromTimeLoader.getFromTime() == null) {
+			fromTimeLoader.setNowFromTime();
 		}
-		read = read.substring(read.indexOf(":")+1, read.length());
-		//fromtimeを設定する ※fromtimeがnullの場合
-		if(MainViewController.fromTime == null) {
-			MainViewController.fromTime = LocalDateTime.now();
-		}
-		boolean flag = false;	// <- 追加済みか判定に使用
-		int t = combo1.getItemCount();
-		String pathcode = read;
+		//フラグを設定する（追加済みか判定に使用）
+		boolean flag = false;
 		//すでに追加中の場合は追加しない
-		if(Files.exists(Paths.get(pathcode))) {
-			data = new AddExcelDataFileModel(pathcode);
+		if(Files.exists(Paths.get(excelPath))) {
+			data = new AddExcelDataFileModel(excelPath);
 			for(Map<String, String> map:modelDataSetList) {
 				flag = map.get("kanriNo").equals(data.getKanriNo());
 				if(flag == true) {
@@ -86,7 +77,7 @@ class AddExcelDataFileHandler implements ActionListener{
 			}
 			//新規追加の場合
 			if(flag == false) {
-				
+
 				//ST固定であるか検査を行う
 				List<Map<Integer,String>> setList = partsStreamSet;
 				boolean Inspection = true;
@@ -101,9 +92,9 @@ class AddExcelDataFileHandler implements ActionListener{
 
 				//ST固定ではない場合は処理の続行を確認する
 				if(Inspection == false) {
-					
+
 					//......処理を追記する
-					
+
 				//ST固定の場合は処理を続ける
 				}else {
 					setExcelData();
@@ -116,7 +107,7 @@ class AddExcelDataFileHandler implements ActionListener{
 			}
 		partsCodeField.requestFocusInWindow();
 	}
-	
+
 	private void setExcelData() {
 		int t = combo1.getItemCount();
 		//コンボボックス
@@ -133,7 +124,7 @@ class AddExcelDataFileHandler implements ActionListener{
 		//基板面ラベル
 		substrateFace.setText(data.getSubstrateFace());
 		//追加したコンボボックス項目を選択する
-		combo1.setSelectedIndex(t);  
+		combo1.setSelectedIndex(t);
 		//初期メニューは削除する
 		if(model.getElementAt(0).equals("モデルを追加してください"))
 		model.removeElementAt(t-1);
@@ -141,7 +132,7 @@ class AddExcelDataFileHandler implements ActionListener{
 		int st = new StationSearchModel().getStationCode(partsStreamSet, partsCodeField.getText());
 		stLabel.setText(st == -1 ? "" :String.valueOf(st));
 		//残部品を記述する
-		int n =	new RemainingPartsMathModel(MainViewController.fromTime, partsStreamSet).getRemainingPartsNumber();
+		int n =	new RemainingPartsMathModel(fromTimeLoader.getFromTime(), partsStreamSet).getRemainingPartsNumber();
 		RemainingParts.setText("残り" + n + "点");
 	}
 }

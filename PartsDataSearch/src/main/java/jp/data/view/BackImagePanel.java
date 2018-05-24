@@ -10,7 +10,11 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class BackImagePanel extends JPanel {
-    // 描画する画像
+    /**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+	// 描画する画像
     private BufferedImage image;
 
     public BackImagePanel(String path) {

@@ -4,7 +4,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 
-import jp.data.controller.MainViewController;
+import com.controller.MainViewController;
 
 public class MainViewTest {
     public static void main(String[] args) {

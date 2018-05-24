@@ -16,6 +16,10 @@ import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
 public class AddModelPanel extends JPanel {
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 	private final JButton addButton = new JButton();
 	private final JComboBox<String> combo = new JComboBox<>();
 	private final JLabel mcName = new JLabel();
@@ -25,12 +29,12 @@ public class AddModelPanel extends JPanel {
 	private final JLabel batuLabel = new JLabel();
 	private final JLabel RemainingParts = new JLabel();
 	private final DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
-	
+
 	public AddModelPanel(int i) {
 		SpringLayout layout = new SpringLayout();
 		this.setLayout(layout);
 		this.setOpaque(false);
-		
+
 		//【モデル１】
 		//追加ボタン1
 		addButton.setText("add" + i);
