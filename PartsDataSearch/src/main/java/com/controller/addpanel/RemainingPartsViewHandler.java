@@ -4,28 +4,32 @@ import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.JLabel;
 
 import jp.data.model.FromTimeLoader;
+import jp.data.model.PartsDataList;
 import jp.data.model.RemainingPartsMathModel;
 import jp.data.view.AddModelPanel;
 import jp.data.view.MainView;
 import jp.data.view.RemainingPartsView;
 
+/**
+ * 
+ * @author kent2
+ *
+ */
 public class RemainingPartsViewHandler implements MouseListener{
 	private final RemainingPartsView partsView;
 	private final JLabel RemainingParts;
-	private final List<Map<Integer, String>> partsStreamSet;
 	private final LocalDateTime fromTime;
+	private final int row;
 
-	public RemainingPartsViewHandler(List<Map<Integer, String>> partsStreamSet, MainView view, AddModelPanel addPanel){
+	public RemainingPartsViewHandler(MainView view, AddModelPanel addPanel, int row){
 		this.partsView = view.getPartsView();
 		this.RemainingParts = addPanel.getRemainingParts();
-		this.partsStreamSet = partsStreamSet;
 		this.fromTime = FromTimeLoader.getInstance().getFromTime();
+		this.row = row;
 	}
 
 	@Override
@@ -46,7 +50,7 @@ public class RemainingPartsViewHandler implements MouseListener{
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		RemainingPartsMathModel math = new RemainingPartsMathModel(fromTime, partsStreamSet);
+		RemainingPartsMathModel math = new RemainingPartsMathModel(fromTime, PartsDataList.getInstance().getPartsList(row));
 		Object[][] data = math.getRemainingPartsList();
 		Object[] column = {"ST","部品コード"};
 		partsView.setTableModel(data, column);

@@ -1,9 +1,5 @@
 package com.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -24,6 +20,12 @@ import jp.data.view.AddModelPanel;
 import jp.data.view.MainView;
 import jp.data.view.RisetDialog;
 
+/**
+ * コントローラクラス
+ * 各種アクションリスナーを割り振ります。
+ * @author kent2
+ *
+ */
 public class MainViewController {
 	private final JPanel MainPanel;
 	private final JTextField partsCodeField;
@@ -32,48 +34,29 @@ public class MainViewController {
 	private final JButton OkButton;
 	private final JButton NgButton;
 	//【モデル1】
-	private static List<Map<String,String>> modelDataSetList1;
-	private static List<Map<Integer, String>> partsStreamSet1;
 	private final AddModelPanel addPanel1;
 	private final JButton add1Button;
 	private final JComboBox<String> combo1;
 	private final JLabel batuLabel1;
 	private final JLabel RemainingParts1;
 	//【モデル2】
-	private static List<Map<String,String>> modelDataSetList2;
-	private static List<Map<Integer, String>> partsStreamSet2;
 	private final AddModelPanel addPanel2;
 	private final JButton add2Button;
 	private final JComboBox<String> combo2;
 	private final JLabel batuLabel2;
 	private final JLabel RemainingParts2;
 	//【モデル3】
-	private static List<Map<String,String>> modelDataSetList3;
-	private static List<Map<Integer, String>> partsStreamSet3;
 	private final AddModelPanel addPanel3;
 	private final JButton add3Button;
 	private final JComboBox<String> combo3;
 	private final JLabel batuLabel3;
 	private final JLabel RemainingParts3;
 	//【モデル4】
-	private static List<Map<String,String>> modelDataSetList4;
-	private static List<Map<Integer, String>> partsStreamSet4;
 	private final AddModelPanel addPanel4;
 	private final JButton add4Button;
 	private final JComboBox<String> combo4;
 	private final JLabel batuLabel4;
 	private final JLabel RemainingParts4;
-
-	static {
-		modelDataSetList1 = new ArrayList<>();
-		modelDataSetList2 = new ArrayList<>();
-		modelDataSetList3 = new ArrayList<>();
-		modelDataSetList4= new ArrayList<>();
-		partsStreamSet1 = new ArrayList<>();
-		partsStreamSet2 = new ArrayList<>();
-		partsStreamSet3 = new ArrayList<>();
-		partsStreamSet4 = new ArrayList<>();
-	}
 
 	public MainViewController(MainView view){
 		this.MainPanel = view.getMainPanel();
@@ -109,69 +92,39 @@ public class MainViewController {
 
 		//アクションリスナーの設定
 		MainPanel.addKeyListener(new MainPanelHandler(partsCodeField));
-		partsCodeField.addActionListener(new RecordSetHandler(modelDataSetList1,partsCodeField));
-		partsCodeField.addFocusListener(new RecordSetHandler(modelDataSetList1,partsCodeField));
+		partsCodeField.addActionListener(new RecordSetHandler(partsCodeField));
+		partsCodeField.addFocusListener(new RecordSetHandler(partsCodeField));
 		newLabel.addMouseListener(new CharacterIconCustomHandler(newLabel,dialog));
 		NgButton.addActionListener(event -> dialog.setVisible(false));
 
 		//【モデル1】
-		partsCodeField.addActionListener(new PartsTextFieldHandler(modelDataSetList1, partsStreamSet1,view, addPanel1));
-		OkButton.addActionListener(new RisetDialogHandler(modelDataSetList1, partsStreamSet1, view, addPanel1));
-		add1Button.addActionListener(new AddExcelDataFileHandler(view, addPanel1, 1));
-		combo1.addItemListener(new ModelSelectComboBoxHandler(modelDataSetList1, view, addPanel1));
-		batuLabel1.addMouseListener(new DeleteModelIconCustomHandler(modelDataSetList1, partsStreamSet1, addPanel1));
-		RemainingParts1.addMouseListener(new RemainingPartsViewHandler(partsStreamSet1, view, addPanel1));
+		partsCodeField.addActionListener(new PartsTextFieldHandler(view, addPanel1, 0));
+		OkButton.addActionListener(new RisetDialogHandler(view, addPanel1));
+		add1Button.addActionListener(new AddExcelDataFileHandler(view, addPanel1, 0));
+		combo1.addItemListener(new ModelSelectComboBoxHandler(view, addPanel1, 0));
+		batuLabel1.addMouseListener(new DeleteModelIconCustomHandler(addPanel1, 0));
+		RemainingParts1.addMouseListener(new RemainingPartsViewHandler(view, addPanel1, 0));
 		//【モデル2】
-		partsCodeField.addActionListener(new PartsTextFieldHandler(modelDataSetList2, partsStreamSet2,view, addPanel2));
-		OkButton.addActionListener(new RisetDialogHandler(modelDataSetList2, partsStreamSet2, view, addPanel2));
-		add2Button.addActionListener(new AddExcelDataFileHandler(view, addPanel2, 2));
-		combo2.addItemListener(new ModelSelectComboBoxHandler(modelDataSetList2, view, addPanel2));
-		batuLabel2.addMouseListener(new DeleteModelIconCustomHandler(modelDataSetList2, partsStreamSet2, addPanel2));
-		RemainingParts2.addMouseListener(new RemainingPartsViewHandler(partsStreamSet2, view, addPanel2));
+		partsCodeField.addActionListener(new PartsTextFieldHandler(view, addPanel2, 1));
+		OkButton.addActionListener(new RisetDialogHandler(view, addPanel2));
+		add2Button.addActionListener(new AddExcelDataFileHandler(view, addPanel2, 1));
+		combo2.addItemListener(new ModelSelectComboBoxHandler(view, addPanel2, 1));
+		batuLabel2.addMouseListener(new DeleteModelIconCustomHandler(addPanel2, 1));
+		RemainingParts2.addMouseListener(new RemainingPartsViewHandler(view, addPanel2, 1));
 		//【モデル3】
-		partsCodeField.addActionListener(new PartsTextFieldHandler(modelDataSetList3, partsStreamSet3,view, addPanel3));
-		OkButton.addActionListener(new RisetDialogHandler(modelDataSetList3, partsStreamSet3, view, addPanel3));
-		add3Button.addActionListener(new AddExcelDataFileHandler(view, addPanel3, 3));
-		combo3.addItemListener(new ModelSelectComboBoxHandler(modelDataSetList3, view, addPanel3));
-		batuLabel3.addMouseListener(new DeleteModelIconCustomHandler(modelDataSetList3, partsStreamSet3, addPanel3));
-		RemainingParts3.addMouseListener(new RemainingPartsViewHandler(partsStreamSet3, view, addPanel3));
+		partsCodeField.addActionListener(new PartsTextFieldHandler(view, addPanel3, 2));
+		OkButton.addActionListener(new RisetDialogHandler(view, addPanel3));
+		add3Button.addActionListener(new AddExcelDataFileHandler(view, addPanel3, 2));
+		combo3.addItemListener(new ModelSelectComboBoxHandler(view, addPanel3, 2));
+		batuLabel3.addMouseListener(new DeleteModelIconCustomHandler(addPanel3, 2));
+		RemainingParts3.addMouseListener(new RemainingPartsViewHandler(view, addPanel3, 2));
 		//【モデル4】
-		partsCodeField.addActionListener(new PartsTextFieldHandler(modelDataSetList4, partsStreamSet4,view, addPanel4));
-		OkButton.addActionListener(new RisetDialogHandler(modelDataSetList4, partsStreamSet4, view, addPanel4));
-		add4Button.addActionListener(new AddExcelDataFileHandler(view, addPanel4, 4));
-		combo4.addItemListener(new ModelSelectComboBoxHandler(modelDataSetList4, view, addPanel4));
-		batuLabel4.addMouseListener(new DeleteModelIconCustomHandler(modelDataSetList4, partsStreamSet4, addPanel4));
-		RemainingParts4.addMouseListener(new RemainingPartsViewHandler(partsStreamSet4, view, addPanel4));
-	}
-
-	public static List<Map<String, String>> getModelDataSetList(int row) {
-		switch(row) {
-		case 1:
-			return modelDataSetList1;
-		case 2:
-			return modelDataSetList2;
-		case 3:
-			return modelDataSetList3;
-		case 4:
-			return modelDataSetList4;
-		default:
-			return null;
-		}
-	}
-
-	public static List<Map<Integer, String>> getPartsStreamSet(int row) {
-		switch(row) {
-		case 1:
-			return partsStreamSet1;
-		case 2:
-			return partsStreamSet2;
-		case 3:
-			return partsStreamSet3;
-		case 4:
-			return partsStreamSet4;
-		default:
-			return null;
-		}
+		partsCodeField.addActionListener(new PartsTextFieldHandler(view, addPanel4, 3));
+		OkButton.addActionListener(new RisetDialogHandler(view, addPanel4));
+		add4Button.addActionListener(new AddExcelDataFileHandler(view, addPanel4, 3));
+		combo4.addItemListener(new ModelSelectComboBoxHandler(view, addPanel4, 3));
+		batuLabel4.addMouseListener(new DeleteModelIconCustomHandler(addPanel4, 3));
+		RemainingParts4.addMouseListener(new RemainingPartsViewHandler(view, addPanel4, 3));
 	}
 
 }

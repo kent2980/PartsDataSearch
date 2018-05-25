@@ -4,8 +4,6 @@ import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -14,17 +12,26 @@ import javax.swing.JLabel;
 
 import com.controller.main.CharacterIconCustomHandler;
 
+import jp.data.model.PartsDataList;
 import jp.data.view.AddModelPanel;
 
+/**
+ * バツ印を押したときの動作をコントロールするクラス
+ * 指定されたデータを削除します
+ * @author kent2
+ *
+ */
 public class DeleteModelIconCustomHandler implements MouseListener{
 	private final JLabel batuLabel;
 	private final JComboBox<String> combo;
 	private final DefaultComboBoxModel<String> model;
-	private final List<Map<String,String>> modelDataSetList;
-	private final List<Map<Integer, String>> partsStreamSet;
 	private static ImageIcon iconSelect;
 	private static ImageIcon iconLight;
+	private final int row;
 
+	/**
+	 * 画像データを読み込む
+	 */
 	static {
 		URL url1 = CharacterIconCustomHandler.class.getResource("/picture/newIcon/batuSelect.png");
 		iconSelect = new ImageIcon(url1);
@@ -38,12 +45,16 @@ public class DeleteModelIconCustomHandler implements MouseListener{
 		iconLight = new ImageIcon(image2);
 	}
 
-	public DeleteModelIconCustomHandler(List<Map<String,String>> modelDataSetList, List<Map<Integer, String>> partsStreamSet, AddModelPanel addPanel){
+	/**
+	 * コンストラクタ
+	 * @param addPanel
+	 * @param row
+	 */
+	public DeleteModelIconCustomHandler(AddModelPanel addPanel, int row){
 		this.batuLabel = addPanel.getBatuLabel();
 		this.combo = addPanel.getCombo();
 		this.model = addPanel.getModel();
-		this.modelDataSetList = modelDataSetList;
-		this.partsStreamSet = partsStreamSet;
+		this.row = row;
 	}
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
@@ -61,20 +72,22 @@ public class DeleteModelIconCustomHandler implements MouseListener{
 		batuLabel.setIcon(iconLight);
 	}
 
+	/**
+	 * マウス左クリック時の動作です
+	 *　指定行のデータを削除します
+	 */
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		if(! combo.getSelectedItem().equals("モデルを追加してください") && model.getSize() == 1) {
 			model.addElement("モデルを追加してください");
 		    combo.setSelectedItem("モデルを追加してください");
 		    model.removeElementAt(0);
-			modelDataSetList.remove(0);
-			partsStreamSet.remove(0);
+			PartsDataList.getInstance().remove(row, 0);
 			combo.setModel(model);
 		}else if(model.getSize() > 1){
 			int i = combo.getSelectedIndex();
 			model.removeElementAt(i);
-			modelDataSetList.remove(i);
-			partsStreamSet.remove(i);
+			PartsDataList.getInstance().remove(row, i);
 			combo.setModel(model);
 		}
 		batuLabel.setIcon(iconLight);

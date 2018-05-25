@@ -12,10 +12,10 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import com.controller.MainViewController;
-
 import jp.data.model.AddExcelDataFileModel;
 import jp.data.model.FromTimeLoader;
+import jp.data.model.PartsDataList;
+import jp.data.model.PartsDataSet;
 import jp.data.model.RemainingPartsMathModel;
 import jp.data.model.SettingLoader;
 import jp.data.model.StationSearchModel;
@@ -33,8 +33,6 @@ public class AddExcelDataFileHandler implements ActionListener{
 	private final JComboBox<String> combo1;
 	private final JTextField partsCodeField;
 	private final DefaultComboBoxModel<String> model;
-	private final List<Map<String,String>> modelDataSetList;
-	private final List<Map<Integer, String>> partsStreamSet;
 	private final JLabel mcName;
 	private final JLabel substrateName;
 	private final JLabel substrateFace;
@@ -42,18 +40,24 @@ public class AddExcelDataFileHandler implements ActionListener{
 	private final JLabel RemainingParts;
 	private AddExcelDataFileModel data;
 	private final FromTimeLoader fromTimeLoader = FromTimeLoader.getInstance();
+	private List<PartsDataSet> modelList;
+	private final int row;
 
 	public AddExcelDataFileHandler(MainView view, AddModelPanel addPanel, int row){
 		this.combo1 = addPanel.getCombo();
 		this.partsCodeField = view.getPartsCodeField();
 		this.model = addPanel.getModel();
-		this.modelDataSetList = MainViewController.getModelDataSetList(row);
 		this.mcName = addPanel.getMcName();
 		this.substrateName = addPanel.getSubstrateName();
 		this.substrateFace = addPanel.getSubstrateFace();
-		this.partsStreamSet = MainViewController.getPartsStreamSet(row);
 		this.stLabel = addPanel.getStView();
 		this.RemainingParts = addPanel.getRemainingParts();
+		try {
+			this.modelList = PartsDataList.getInstance().getModelList(row);
+		}catch(IndexOutOfBoundsException e) {
+			this.modelList = null;
+		}
+		this.row = row;
 	}
 
 	@Override
@@ -69,26 +73,19 @@ public class AddExcelDataFileHandler implements ActionListener{
 		//すでに追加中の場合は追加しない
 		if(Files.exists(Paths.get(excelPath))) {
 			data = new AddExcelDataFileModel(excelPath);
-			for(Map<String, String> map:modelDataSetList) {
-				flag = map.get("kanriNo").equals(data.getKanriNo());
-				if(flag == true) {
-					break;
-				}
+			//内部データの重複チェックを行う
+			try {
+				flag = modelList.stream()
+								 .anyMatch(s->s.getKanriNo().equals(data.getKanriNo()));
+			}catch(NullPointerException es) {
+				flag = false;
 			}
 			//新規追加の場合
 			if(flag == false) {
 
 				//ST固定であるか検査を行う
-				List<Map<Integer,String>> setList = partsStreamSet;
 				boolean Inspection = true;
-				for(Map<Integer,String> map:setList) {
-					for(Integer it : map.keySet()) {
-						Inspection = map.get(it).equals(data.getPartsMap().get(it));
-						if(Inspection == false) {
-							break;
-						}
-					}
-				}
+
 
 				//ST固定ではない場合は処理の続行を確認する
 				if(Inspection == false) {
@@ -112,10 +109,15 @@ public class AddExcelDataFileHandler implements ActionListener{
 		int t = combo1.getItemCount();
 		//コンボボックス
 		model.addElement("  " + data.getKanriNo() + " , " + data.getModelName() + " , " + data.getMcName());
-		//モデルデータセット
-		modelDataSetList.add(data.getModelDataSet());
-		//パーツセット
-		partsStreamSet.add(data.getPartsMap());
+		//
+		String kanriNos = data.getKanriNo();
+		String modelNames = data.getModelName();
+		String mcNames = data.getMcName();
+		String substrateNames = data.getSubstrateName();
+		String substrateFaces = data.getSubstrateFace();
+		Map<Integer,String> partsLists = data.getPartsMap();
+		PartsDataSet dataSet = new PartsDataSet(kanriNos, modelNames, mcNames, substrateNames, substrateFaces, partsLists);
+		PartsDataList.getInstance().setPartsDataSet(dataSet, row);
 		//マシンネームラベル
 		mcName.setText(data.getMcName());
 		//基板名ラベル
@@ -129,10 +131,10 @@ public class AddExcelDataFileHandler implements ActionListener{
 		if(model.getElementAt(0).equals("モデルを追加してください"))
 		model.removeElementAt(t-1);
 		//STNoを検索し記述する
-		int st = new StationSearchModel().getStationCode(partsStreamSet, partsCodeField.getText());
+		int st = new StationSearchModel().getStationCode(PartsDataList.getInstance().getPartsList(row), partsCodeField.getText());
 		stLabel.setText(st == -1 ? "" :String.valueOf(st));
 		//残部品を記述する
-		int n =	new RemainingPartsMathModel(fromTimeLoader.getFromTime(), partsStreamSet).getRemainingPartsNumber();
+		int n =	new RemainingPartsMathModel(fromTimeLoader.getFromTime(), PartsDataList.getInstance().getPartsList(row)).getRemainingPartsNumber();
 		RemainingParts.setText("残り" + n + "点");
 	}
 }

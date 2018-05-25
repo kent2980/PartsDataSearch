@@ -6,20 +6,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.JTextField;
 
+import jp.data.model.PartsDataList;
 import jp.data.model.PartsTextFieldModel;
 import jp.data.model.SetPartsTextFieldRecordModel;
 
 public class RecordSetHandler implements ActionListener,FocusListener{
-	private final List<Map<String,String>> modelDataSetList;
 	private final JTextField field;
 
-	public RecordSetHandler(List<Map<String,String>> modelDataSetList, JTextField field) {
-		this.modelDataSetList = modelDataSetList;
+	public RecordSetHandler(JTextField field) {
 		this.field = field;
 	}
 
@@ -33,10 +30,10 @@ public class RecordSetHandler implements ActionListener,FocusListener{
 		}else {
 			field.setFont(new Font("Lucida Sans", Font.PLAIN, 50));
 		}
-		if(modelDataSetList.size() > 0) {
+		if(PartsDataList.getInstance().getSize() > 0) {
 			if(textModel.getValueCode() == 1 || textModel.getValueCode() == 3) {
-				String modelName = modelDataSetList.get(0).get("modelName");
-				String mcName = modelDataSetList.get(0).get("mcName");
+				String modelName = PartsDataList.getInstance().getModelName(0, 0);
+				String mcName = PartsDataList.getInstance().getMcName(0, 0);
 				new SetPartsTextFieldRecordModel(LocalDateTime.now(),partsName,modelName,mcName).setRecord();
 			}
 		}
